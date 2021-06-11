@@ -1,0 +1,11 @@
+{{ form_row(formPost.category) }}
+{{ form_row(formPost.content, {'attr': {'placeholder': "Exprimez vous"}}) }}
+{{ form_row(formPost.img,
+    {'attr': {'class':'inputGroupFile'}}) }}
+{{ form_row(formPost.tags) }}
+
+
+    {% for tag in formPost.tags %}
+        {{ form_widget(tag.name , {'attr': {'class': 'dynchoice'}}) }}
+    {% endfor %}
+

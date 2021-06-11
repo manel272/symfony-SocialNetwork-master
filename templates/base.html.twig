@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description"
+          content="Cercle est une application permettant d'échanger de discuter, de débattre ou bien tout simplement donner son avis sur tout ou rien"/>
+    <meta name="keywords" content="Réseau social,échange,exprimer,débat">
+    <meta name="author" content="Said LITIM"/>
+    <meta name="theme-color" content="#007bff">
+    <!--REFERENCEMENT FACEBOOK-->
+    <meta property="og:title" content="Bievenue dans le cercle!"/>
+    <meta property="og:url" content="XXX"/>
+    <meta property="og:description" content="Un endroit ou échange est le maitre mot"/>
+
+    <title>{% block title %}Bienvenue!{% endblock %}</title>
+    {% block stylesheets %}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Fredoka+One&display=swap" rel="stylesheet">
+        <link href="{{ asset('style.css') }}" rel="stylesheet" type="text/css"/>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css"
+              rel="stylesheet" type="text/css"/>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput-typeahead.css"
+              rel="stylesheet" type="text/css"/>
+        <link href="https://fonts.googleapis.com/css?family=Righteous&display=swap" rel="stylesheet">
+    {% endblock %}
+    <style>
+
+        .bootstrap-tagsinput .tag {
+            background-color: #007bff;
+            padding: 3px;
+            border-radius: 3px;
+        }
+
+        .user {
+            font-family: 'Righteous', cursive;
+        }
+
+        .badge-light {
+            font-family: 'Fredoka One', cursive;
+        }
+
+
+        @media (max-width: 640px) {
+            .rowform {
+                margin: auto;
+            }
+
+            .news {
+                width: 100%;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/"><i class="fas fa-circle-notch fa-2x"></i> SocialNet</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ path('home') }}">Accueil
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('reseaus') }}">Voir les posts</a>
+                </li>
+                {% if is_granted('ROLE_USER') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('post_create') }}">Exprimez vous</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('security_login') }}">Connexion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('register') }}">Créer un compte</a>
+                    </li>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('admin') }}">Gestion des Utilisateurs</a>
+                    </li>
+
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="col-sm-12">
+    {% block body %}{% endblock %}
+</div>
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/5018656bb5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+
+    <script>
+
+        function onClickLike(event) {
+            event.preventDefault();
+            fetch(this.href)
+                .then(data => {
+                    return data.json()
+                })
+                .then(res => {
+                    const likes = res.likes;
+
+                    this.querySelector('span.js-likes').textContent = likes;
+                    const icone = this.querySelector('i');
+                    if (icone.classList.contains('fas')) {
+                        icone.classList.replace('fas', 'far');
+                        this.querySelector('span.js-label').textContent = 'J\'aime'
+                    } else {
+                        icone.classList.replace('far', 'fas');
+                        this.querySelector('span.js-label').textContent = 'Je n\'aime plus'
+                    }
+                })
+                .catch(error => console.log(error))
+        }
+
+
+        document.querySelectorAll('.btn-link').forEach(function (link) {
+
+            link.addEventListener('click', onClickLike);
+
+
+        })
+
+        $(".dynchoice").tagsinput(
+            {
+                trimValue: true
+            }
+        );
+
+
+        $(document).on('change', '#post_img', function () {
+            let fileName = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+            $(this).parent('.custom-file').find('.custom-file-label').text(fileName);
+        });
+
+    </script>
+{% endblock %}
+</body>
+</html>

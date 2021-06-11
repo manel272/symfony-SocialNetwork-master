@@ -1,0 +1,26 @@
+{% extends 'base.html.twig ' %}
+
+{% block title %}Modifie ton post{% endblock %}
+
+{% form_theme formPost 'bootstrap_4_layout.html.twig' %}
+
+
+{% block body %}
+
+    <div class="createModi">
+        <div class="container">
+            <h2>Création d'une post</h2>
+
+            {{ form_start(formPost) }}
+
+            {% include "reseaus/form.html.twig" %}
+
+            <button type="submit" class="btn btn-success">
+                Modifier le Post
+            </button>
+
+            {{ form_end(formPost) }}
+        </div>
+    </div>
+
+{% endblock %}

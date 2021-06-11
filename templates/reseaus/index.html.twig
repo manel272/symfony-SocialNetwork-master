@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cercle actu{% endblock %}
+
+{% block body %}
+    <div class="search bg-light">
+        <div class="container">
+            {{ form(form) }}
+        </div>
+    </div>
+    {% for post in posts %}
+        <div class="news card col-lg-7 col-sm-12">
+            <img class="card-img-top" src="{{ '/files/' ~ post.imgFileName }}" alt="Card image cap">
+            <div class="text-center card-header">
+                <a href="{{ path('show_user', {'id': post.user.id }) }}"><h3 class="user text-primary"><i
+                                class="fas fa-user-tie user"></i> {{ post.user.alias }}</h3></a>
+            </div>
+            <div class="card-body">
+                {% for tag in post.tags %}
+                    <p class="badge badge-primary ">#{{ tag }}</p>
+                {% endfor %}
+                <span class="small text-muted">
+                    le {{ post.createdAt | date('d/m/Y') }} à {{ post.createdAt | date('H:i') }}
+                </span><br>
+                {% if is_granted('ROLE_USER') %}
+                    <a href="{{ path('post_like', {'id' : post.id} ) }}" class="btn btn-link">
+
+                        <span class="js-likes">{{ post.loves | length }}</span>
+
+                        {% if app.user in post.loves %}
+                            <i class="fas fa-heart fa-2x text-danger"></i>
+                            <span class="js-label">Je n'aime plus</span>
+                        {% else %}
+                            <i class="far fa-heart fa-2x text-danger"></i>
+                            <span class="js-label">J'aime</span>
+                        {% endif %}
+
+
+                    </a>
+                {% else %}
+                    <span class="js-likes">{{ post.loves | length }}</span>
+                    <i class="fas fa-heart fa-2x text-danger"></i>
+                    <span class="js-label">J'aime</span>
+                {% endif %}
+
+                <p class="card-text">
+                    {{ post.content | raw }}
+                </p>
+                {% if is_granted('ROLE_USER') %}
+                    <a class="btn btn-primary" href="{{ path('post_show', {'id': post.id }) }}"><i
+                                class="far fa-comments fa-2x"></i></a>
+                {% else %}
+                    <div class="badge badge-info mb-4">Connectez-vous pour participer à la discussion</div><br>
+                    <a class="btn btn-primary" href="{{ path('post_show', {'id': post.id, 'usId': post.user.id }) }}"><i
+                                class="far fa-comments fa-2x"></i></a>
+                {% endif %}
+            </div>
+            {% if is_granted('edit',post) %}
+                <a class="btn text-primary text-right" href="{{ path('post_edit', {'id': post.id }) }}">Modifier</a>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN') or is_granted('edit',post) %}
+                {% include "reseaus/delete_form.html.twig" %}
+            {% endif %}
+        </div>
+
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            {{ knp_pagination_render(posts) }}
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
